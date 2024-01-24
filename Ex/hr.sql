@@ -879,8 +879,26 @@ inner join departments d
 	on e.department_id = d.department_id
 inner join jobs j 
 	on e.job_id = j.job_id;
+/*
+이름, 부서번호, 부서명, 업무아이디, 업무명, 도시아이디, 도시명
+	직원(이름, 부서번호, 업무아이디)
+	부서(부서번호, 부서명)
+	업무(업무아이디, 업무명, 도시아이디)
+	도시(도시아이디, 도시명)
+*/
+select first_name,
+	   d.department_id,
+       d.department_name,
+       j.job_id,
+       j.job_title,
+       l.location_id,
+       l.city
+from employees e, departments d, jobs j, locations l
+where e.department_id = d.department_id 
+	and e.job_id = j.job_id 
+	and d.location_id = l.location_id;
 
--- 이름, 부서번호, 부서명, 업무아이디, 업무명, 도시아이디, 도시명
+
 select first_name,
 	   d.department_id,
        d.department_name,
