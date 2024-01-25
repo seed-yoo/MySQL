@@ -15,6 +15,11 @@ where salary < any (select avg(salary)
 순으로 정렬하여 출력하세요
 (51건)
 */
+select *
+from employees;
+
+
+
 -- 평균 월급
 select avg(salary)
 from employees;
@@ -26,15 +31,16 @@ from employees;
 select employee_id, 
 	   first_name, 
        salary,
-       avg(salary),
-       max(salary)
+       (select avg(salary)
+		from employees) as '평균월급',
+       (select max(salary)
+		from employees) as '최대월급'
 from employees
 where salary >= (select avg(salary)
 				from employees)
-                and
-	salary <= (select max(salary)
+and salary <= (select max(salary)
 				from employees)
-group by employee_id
+
 order by salary asc;
 
 /*
