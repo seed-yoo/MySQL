@@ -90,7 +90,7 @@ where first_name like '%s%';
 문제8.
 전체 부서를 출력하려고 합니다. 순서는 부서이름이 긴 순서대로 출력해 보세오.
 */
-select *
+select department_name, char_length(department_name)
 from departments
 order by character_length(department_name) desc;
 

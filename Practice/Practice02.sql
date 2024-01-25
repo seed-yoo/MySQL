@@ -23,6 +23,7 @@ from employees;
 select date_format(max(hire_date), '%Y년 %m월 %d일') '날짜'
 from employees;
 
+
 /*
 문제4.
 부서별로 평균임금, 최고임금, 최저임금을 부서아이디(department_id)와 함께 출력합니다.
@@ -71,7 +72,8 @@ select department_id '부서',
        (avg(salary)-min(salary)) '(평균임금 – 최저임금)'
 from employees
 group by department_id
-having (avg(salary)-min(salary)) < 2000;
+having (avg(salary)-min(salary)) < 2000
+order by (avg(salary)-min(salary)) desc;
 
 
 /*
@@ -94,10 +96,11 @@ order by (max(salary) - min(salary)) desc;
 합니다
 */
 select manager_id 'manager_id',
-	   round(avg(salary), 1) 'avg',
+	   round(avg(salary), 0) 'avg',
        max(salary) 'max',
 	   min(salary) 'min'
 from employees
+where hire_date > '2005/01/01'
 group by manager_id
 having avg(salary) >= 5000
 order by avg(salary) desc;
