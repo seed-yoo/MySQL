@@ -40,8 +40,24 @@ where salary >= (select avg(salary)
 				from employees)
 and salary <= (select max(salary)
 				from employees)
-
 order by salary asc;
+
+
+
+
+select e.employee_id, 
+	   e.first_name, 
+       e.salary,
+       (avg(m.salary)) as '평균월급',
+	   (max(m.salary)) as '최대월급'
+from employees e, employees m
+where e.salary >= (select avg(salary)
+				from employees)
+and e.salary <= (select max(salary)
+				from employees)
+group by e.employee_id
+order by salary asc;
+
 
 /*
 문제3.
