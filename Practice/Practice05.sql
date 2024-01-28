@@ -56,30 +56,186 @@ order by salary desc;
 니저별최대월급 입니다.
 (9건)
 */
-select avg(salary), manager_id
-from employees e, employees p
-group by manager_id;
+select e.manager_id,
+	   m.first_name,
+	   round(avg(e.salary) , 0) as 'asalary' , 
+	   max(e.salary),
+       max(e.salary)
+from employees m, employees e, (select avg(salary) as 'asalary', manager_id
+								from employees
+								group by manager_id) s
+where e.hire_date >= '2005/01/01'
+and s.asalary = asalary
+and s.manager_id = e.manager_id
+and m.employee_id = e.manager_id
+group by e.manager_id
+having avg(e.salary) >= 5000
+order by asalary desc
+;
 
+/*
+문제4.
+각 사원(employee)에 대해서 사번(employee_id), 이름(first_name), 부서명
+(department_name), 매니저(manager)의 이름(first_name)을 조회하세요.
+부서가 없는 직원(Kimberely)도 표시합니다.
+(106명)
+*/
+select e.employee_id,
+	   e.first_name,
+       d.department_name,
+       m.first_name
+from employees e
+join employees m on m.employee_id = e.manager_id
+left outer join departments d on e.department_id = d.department_id
+;
 
-select avg(salary) '매니저별평균월급', manager_id
+/*
+문제5.
+2005년 이후 입사한 직원중에 입사일이 11번째에서 20번째의 직원의
+사번, 이름, 부서명, 월급, 입사일을 입사일 순서로 출력하세요
+*/
+select e.employee_id,
+	   e.first_name,
+       d.department_name,
+       e.salary,
+       hire_date
+from employees e, departments d
+where e.department_id = d.department_id
+and hire_date > '2005/12/31'
+limit 10 , 10;
+
+/*
+문제6.
+가장 늦게 입사한 직원의 이름(first_name last_name)과 월급(salary)과 근무하는 부서 이름
+(department_name)은?
+*/
+select concat(e.first_name, e.last_name) '이름',
+	   e.salary '월급',
+       d.department_name '부서이름',
+       e.hire_date
+from employees e, departments d
+where e.department_id = d.department_id
+and hire_date in (select max(hire_date)
+				from employees);
+
+/*
+문제7.
+평균월급(salary)이 가장 높은 부서 직원들의 직원번호(employee_id), 이름(firt_name), 성
+(last_name)과 업무(job_title), 월급(salary)을 조회하시오.
+*/
+/*
+select avg(salary)
 from employees
-where hire_date >= '2005/01/01'
-group by manager_id;
+group by department_id
+;
 
-
-
-select m.manager_id,
-	   m.first_name
-       
-
-from employees e, employees m 
-where e.manager_id = m.employee_id
-and e.hire_date >= '2005/01/01'
+select asalary
+from employees e, (select avg(salary) as 'asalary', department_id
+					from employees
+					group by department_id) s
+where e.department_id = s.department_id
 ;
 
 
+select e.employee_id,
+	   e.first_name,
+       e.last_name,
+       j.job_title,
+       e.salary,
+       s.asalary,
+       e.department_id
+from jobs j, employees e, (select avg(salary) as 'asalary',
+								department_id
+							from employees
+							group by department_id) s
+where s.department_id = e.department_id
+and j.job_id = e.job_id
+and (s.asalary) >= (select max(s.asalary)
+					from employees e, (select avg(salary) as 'asalary', department_id
+										from employees
+										group by department_id) s
+					where e.department_id = s.department_id);
+*/
+select e.employee_id,
+	   e.first_name,
+       e.last_name,
+       j.job_title,
+       e.salary,
+       s.asalary,
+       e.department_id
+from jobs j, employees e, (select avg(salary) as 'asalary',
+								department_id
+							from employees
+							group by department_id) s
+where s.department_id = e.department_id
+and j.job_id = e.job_id
+and (s.asalary) >= all (select asalary
+						from employees e, (select avg(salary) as 'asalary', department_id
+											from employees
+											group by department_id) s
+						where e.department_id = s.department_id);
+
+/*
+문제8.
+평균 월급(salary)이 가장 높은 부서명과 월급은? (limt사용하지 말고 그룹함수 사용할 것)
+*/
+select d.department_name,
+	   s.asalary
+from employees e, departments d , (select e.department_id,
+										   avg(salary) as 'asalary'
+									from employees e, departments d
+									where e.department_id = d.department_id
+									group by department_id) s
+where e.department_id = d.department_id
+and s.department_id = e.department_id
+and s.department_id = d.department_id
+group by e.department_id
+having s.asalary >= (select max(asalary)
+						from employees e, (select avg(salary) as 'asalary', department_id
+											from employees
+											group by department_id) s
+						where e.department_id = s.department_id)
+;
+
+/*
+문제9.
+평균 월급(salary)이 가장 높은 지역과 평균월급은?
+*/
+select r.region_name,
+	   avg(salary) 'asalary'
+from countries c, regions r, locations l, departments d, employees e
+where c.region_id = r.region_id
+and l.country_id = c.country_id
+and d.location_id = l.location_id
+and e.department_id = d.department_id
+group by r.region_id
+order by asalary desc
+limit 0, 1
+;
 
 
+/*
+문제10.
+평균 월급(salary)이 가장 높은 업무와 평균월급은? (limt사용하지 말고 그룹함수 사용할 것)
+*/
+
+select j.job_title,
+	   s.asalary
+from employees e, jobs j , (select e.job_id,
+										   avg(salary) as 'asalary'
+									from employees e, jobs j
+									where e.job_id = j.job_id
+									group by job_id) s
+where e.job_id = j.job_id
+and s.job_id = e.job_id
+and s.job_id = j.job_id
+group by e.job_id
+having s.asalary >= (select max(asalary)
+						from employees e, (select avg(salary) as 'asalary', job_id
+											from employees
+											group by job_id) s
+						where e.job_id = s.job_id)
+;
 
 
 
