@@ -7,8 +7,6 @@
 create user 'book'@'%' identified by 'book';
 
 
-
-
 -- 권한설정 쿼리문
 # book_db데이터베이스의 book계정이 모든테이블에 모든 권한을 부여받습니다.
 grant all privileges on book_db.* to 'book'@'%';
@@ -49,6 +47,9 @@ create table book (
     references author(author_id)
 );
 
+-- book_increment		 생성된 테이블에 적용
+alter table book modify book_id int auto_increment primary key;
+
 
 -- author테이블 데이터 입력 쿼리문 6개
 # 문제 이미지의 결과가 나오도록 데이터를 입력합니다.
@@ -72,7 +73,6 @@ insert into book(title, pubs, pub_date, author_id) value ('패션왕', '중앙�
 insert into book(title, pubs, pub_date, author_id) value ('순정만화', '재미주의', '2011/08/03', 5);
 insert into book(title, pubs, pub_date, author_id) value ('오직두사람', '문학동네', '2017/05/04', 6);
 insert into book(title, pubs, pub_date, author_id) value ('26년', '재미주의', '2012/02/04', 5);
-insert into book(title, pubs, pub_date, author_id) value ('자바의정석', '열린책들', '2015/10/20', null);
 insert into book(title, pubs, pub_date, author_id) value ('자바의정석', '열린책들', '2015/10/20', null);
 
 
