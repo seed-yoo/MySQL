@@ -197,6 +197,9 @@ having s.asalary >= (select max(asalary)
 						where e.department_id = s.department_id)
 ;
 
+
+
+
 /*
 문제9.
 평균 월급(salary)이 가장 높은 지역과 평균월급은?
